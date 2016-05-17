@@ -1,10 +1,11 @@
 # xss-proxy
-BeEF-inspired XSS proxy service
+*BeEF-inspired XSS proxy service*
 
 Dependencies:
-pip install flask
+    
 
-pip install flask-cors
+        pip install flask
+        pip install flask-cors
 
 
 This is just a PoC atm...
@@ -19,6 +20,5 @@ sqlite database will get updated with responses made by the xss script
 
 Helper scripts:
 
-run makedb.py to create/reset the database dummy data
-
-run dbtest.py to view database contents
+> run makedb.py to create/reset the database dummy data 
+> run dbtest.py to view database contents
