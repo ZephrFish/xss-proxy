@@ -3,6 +3,7 @@ BeEF-inspired XSS proxy service
 
 Dependencies:
 pip install flask
+
 pip install flask-cors
 
 
